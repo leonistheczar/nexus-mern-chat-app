@@ -1,80 +1,103 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import SignIn from "@/components/AuthPage/SignIn";
-import SignUp from "@/components/AuthPage/SignUp";
+import ClerkSignIn from "@/components/AuthPage/ClerkSignIn";
+import ClerkSignUp from "@/components/AuthPage/ClerkSignUp";
 
-function modeFromParam(value: string | null): "signin" | "signup" {
+type AuthMode = "signin" | "signup";
+
+function modeFromParam(value: string | null): AuthMode {
   return value === "signup" ? "signup" : "signin";
 }
+
 export default function AuthClient() {
   const searchParams = useSearchParams();
   const currentMode = modeFromParam(searchParams.get("mode"));
-  return <AuthFormContent key={currentMode} defaultMode={currentMode} />;
-}
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-function AuthFormContent({ defaultMode }: { defaultMode: "signin" | "signup" }) {
-  const [mode, setMode] = useState<"signin" | "signup">(defaultMode);
+  function setMode(nextMode: AuthMode) {
+    if (nextMode === currentMode) return;
+
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("mode", nextMode);
+    startTransition(() => {
+      router.replace(`/auth?${nextParams.toString()}`, { scroll: false });
+    });
+  }
 
   return (
-    <section className="h-fit sm:min-h-screen bg-background-50 block sm:flex items-center p-10 shadow-md rounded-lg">
-      <div className="max-w-6xl mx-auto block sm:grid md:grid-cols-2 gap-6 items-center w-full">
-        
-        {/* LEFT: Illustration */}
-        <div className="hidden md:block relative w-full h-[420px]">
-          <Image
-            src="/ui-photos/signin.png"
-            alt="Auth"
-            fill
-            sizes="50vw"
-            className="object-contain"
-            priority
-          />
+    <section className="flex w-full flex-1 items-center justify-center bg-background-50 px-3 py-6 sm:px-6 sm:py-10">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-3xl border border-background-200/80 bg-background-50/85 lg:grid-cols-[minmax(0,0.9fr)_minmax(22rem,1.1fr)]">
+
+        {/* LEFT: Brand & Image */}
+        <div className="relative hidden lg:min-h-152 bg-primary-100/70 p-10 lg:flex lg:flex-col lg:p-14">
+          <div className="relative z-10 max-w-sm">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary-600">
+              Welcome to Nexus
+            </p>
+            <h1 className="text-3xl font-semibold leading-tight text-text-800 lg:text-4xl">
+              Conversations that feel close, wherever you are.
+            </h1>
+            <p className="mt-4 text-sm leading-6 text-text-500">
+              Sign in to continue your conversations or create an account in a
+              few moments.
+            </p>
+          </div>
+          <div className="relative mt-auto h-64 w-full lg:h-72">
+            <Image
+              src="/ui-photos/signin.png"
+              alt="People connecting through Nexus"
+              fill
+              sizes="(max-width: 1024px) 0vw, 45vw"
+              className="object-contain object-bottom"
+              priority
+            />
+          </div>
         </div>
 
-        {/* RIGHT: Form */}
-        <div className="bg-background-50 p-4 w-full max-w-md mx-auto">
-          
-          {/* Toggle */}
-          <div className="flex justify-center mb-6">
-            <div className="relative flex bg-primary-100 rounded-lg p-1">
-              
-              {/* Sliding Indicator */}
-              <motion.div
-                layout
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="absolute top-1 bottom-1 w-24 rounded-md bg-secondary-300/50 shadow"
-                style={{
-                  left: mode === "signin" ? "4px" : "50%",
-                }}
-              />
+        {/* RIGHT: Authentication */}
+        <div className="flex min-w-0 items-center justify-center p-4 sm:p-6 lg:p-8">
+          <div className="w-full">
 
-              <button
-                onClick={() => setMode("signin")}
-                className="relative z-10 px-4 py-1 text-sm w-24 transition hover:cursor-pointer"
-              >
-                Sign In
-              </button>
+            {/* Toggle Buttons */}
+            <div
+              aria-label="Authentication mode"
+              className="mx-auto mb-7 grid w-full max-w-60 sm:max-w-xs grid-cols-2 gap-x-2 rounded-xl border border-primary-200/70 bg-primary-50 p-1"
+              role="tablist"
+            >
+              {(["signin", "signup"] as const).map((tab) => {
+                const isActive = currentMode === tab;
+                const label = tab === "signin" ? "Sign in" : "Sign up";
 
-              <button
-                onClick={() => setMode("signup")}
-                className="relative z-10 px-4 py-1 text-sm w-24 transition hover:cursor-pointer"
-              >
-                Sign Up
-              </button>
+                return (
+                  <button
+                    key={tab}
+                    aria-selected={isActive}
+                    className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors cursor-pointer ${
+                      isActive
+                        ? "bg-primary-100 text-primary-900 shadow-sm"
+                        : "text-text-500 hover:text-text-700 hover:bg-primary-200/40"
+                    }`}
+                    disabled={isPending}
+                    onClick={() => setMode(tab)}
+                    role="tab"
+                    type="button"
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
-          </div>
 
-          {/* Animated Forms */}
-          <div className="relative h-fit sm:h-[calc(70dvh-2rem)] p-4 ">
-            <AnimatePresence mode="wait">
-              {mode === "signin" ? <SignIn key="signin" /> : <SignUp key="signup" />}
-            </AnimatePresence>
-          </div>
+            {/* Forms — fixed min-height so Sign In / Sign Up never shift the card */}
+            <div className="min-h-88 sm:min-h-104 lg:min-h-128 w-full flex justify-center" aria-live="polite">
+              {currentMode === "signin" ? <ClerkSignIn /> : <ClerkSignUp />}
+            </div>
 
+          </div>
         </div>
       </div>
     </section>

@@ -11,7 +11,10 @@ export interface User {
   contact: string;
   profilePic: string;
 }
-
+export type SignUpUser = {
+  email: string,
+  password: string
+}
 export interface ChatMessage {
   id: number;
   sender: User;

@@ -3,10 +3,11 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Authentication", 
+  title: "Authentication",
   description:
     "Nexus is a modern real-time messaging platform built for seamless conversations. Designed for speed, privacy, and simplicity.",
 };
+
 export default function AuthPage() {
   return (
     <Suspense>

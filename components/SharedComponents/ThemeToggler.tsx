@@ -24,7 +24,7 @@ export default function ThemeToggle() {
     <button
       onClick={toggleTheme}
       className="
-        relative w-10 h-10 flex items-center justify-center
+        relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center
         rounded-full bg-primary-200 overflow-hidden
         transition-all hover:cursor-pointer hover:bg-primary-300
       "

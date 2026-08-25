@@ -1,309 +1,327 @@
 "use client";
 
-import { ChevronDown, Menu, X } from "lucide-react";
-import { motion, Variants, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowRight,
+  BarChart3,
+  ChevronDown,
+  Menu,
+  MessageCircle,
+  ShieldCheck,
+  Users,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import ThemeToggler from "./ThemeToggler";
 
+type NavigationItem = {
+  name: string;
+  href: string;
+};
+
+type FeatureItem = NavigationItem & {
+  description: string;
+  icon: typeof MessageCircle;
+};
+
+const navigation: NavigationItem[] = [
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
+];
+
+const features: FeatureItem[] = [
+  {
+    name: "Real-time messaging",
+    href: "/features",
+    description: "Instant delivery with typing indicators",
+    icon: MessageCircle,
+  },
+  {
+    name: "Private conversations",
+    href: "/features",
+    description: "Secure conversations built for trust",
+    icon: ShieldCheck,
+  },
+  {
+    name: "Smart conversations",
+    href: "/features",
+    description: "Connect with people and groups",
+    icon: Users,
+  },
+  {
+    name: "Usage insights",
+    href: "/features",
+    description: "Understand activity at a glance",
+    icon: BarChart3,
+  },
+];
+
+const menuMotion = {
+  hidden: { opacity: 0, y: -6, scale: 0.98 },
+  visible: { opacity: 1, y: 0, scale: 1 },
+  exit: { opacity: 0, y: -6, scale: 0.98 },
+};
+
 export default function Navbar() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-      },
-    },
-  };
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.1,
-        ease: "easeIn",
-      },
-    },
-  };
-  const [mobileNav, setMobileNav] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
+    const handleScroll = () => setIsScrolled(window.scrollY > 12);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsFeaturesOpen(false);
+        setIsMobileOpen(false);
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = isMobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileOpen]);
+
+  function isActive(href: string) {
+    return pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
+  }
+
+  function closeMobileNavigation() {
+    setIsMobileOpen(false);
+  }
+
   return (
-    <>
-      {/* Desktop Navigation */}
-      <div className="hidden sm:block sticky top-0.5 z-50 mx-16 ">
-        <nav
-          className={`
-          mx-6 mt-4 px-6 rounded-xl shadow-sm backdrop-blur-md
-          transition-all duration-300
-          ${scrolled ? "bg-primary-100/70" : "bg-primary-100"}
-        `}
-        >
-          <div className="flex items-center justify-between space-x-6">
-            {/* Logo */}
-            <Link href="/" className="relative block w-28 h-28">
-              <Image
-                src="/logo/nexus-logo.png"
-                alt="Nexus Logo"
-                fill
-                priority
-                sizes="145px"
-                className="object-contain"
-              />
-            </Link>
-
-            {/* Links */}
-            <ul className="flex gap-x-8 items-center ">
-              <li
-                className="group cursor-pointer p-2"
-                onMouseEnter={() => setOpen(true)}
-                onMouseLeave={() => setOpen(false)}
-              >
-                <div className="flex items-center gap-1 relative group">
-                  <Link href="/features">Features</Link>
-                  <motion.span
-                    animate={{ rotate: open ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ChevronDown size={16} />
-                  </motion.span>
-                  <AnimatePresence>
-                    {open && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 0, scale: 0.96 }}
-                        animate={{ opacity: 1, y: 5, scale: 1 }}
-                        exit={{ opacity: 0, y: 0, scale: 0.96 }}
-                        transition={{ duration: 0.18, ease: "easeOut" }}
-                        className="absolute top-8 left-0 w-72 bg-primary-200 p-4 rounded-2xl shadow-xl border border-primary-100 z-50"
-                      >
-                        <div className="flex flex-col gap-4 text-sm">
-                          {/* Messaging */}
-                          <Link href="/features">
-                            <div className="group flex items-center gap-3 p-2 rounded-lg hover:bg-primary-100/60 transition cursor-pointer">
-                              <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-100 group-hover:scale-110 transition">
-                                {/* icon */}
-                                <span className="text-primary-700">💬</span>
-                              </div>
-
-                              <div>
-                                <p className="font-medium text-primary-900">
-                                  Real-Time Messaging
-                                </p>
-                                <p className="text-primary-900/70 text-xs">
-                                  Instant delivery with typing indicators
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-
-                          {/* Encryption */}
-                          <Link href="/features">
-                            <div className="group flex items-center gap-3 p-2 rounded-lg hover:bg-primary-100/60 transition cursor-pointer">
-                              <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-100 group-hover:scale-110 transition">
-                                <span className="text-primary-700">🔐</span>
-                              </div>
-
-                              <div>
-                                <p className="font-medium text-primary-900">
-                                  End-to-End Encryption
-                                </p>
-                                <p className="text-primary-900/70 text-xs">
-                                  Client-side encryption with secure keys
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-
-                          {/* Groups */}
-                          <Link href="/features">
-                            <div className="group flex items-center gap-3 p-2 rounded-lg hover:bg-primary-100/60 transition cursor-pointer">
-                              <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-100 group-hover:scale-110 transition">
-                                <span className="text-primary-700">👥</span>
-                              </div>
-
-                              <div>
-                                <p className="font-medium text-primary-900">
-                                  Smart Conversations
-                                </p>
-                                <p className="text-primary-900/70 text-xs">
-                                  P2P and mini-group chat architecture
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-
-                          <Link href="/features">
-                            {/* Analytics */}
-                            <div className="group flex items-center gap-3 p-2 rounded-lg hover:bg-primary-100/60 transition cursor-pointer">
-                              <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-100 group-hover:scale-110 transition">
-                                <span className="text-primary-700">📊</span>
-                              </div>
-
-                              <div>
-                                <p className="font-medium text-primary-900">
-                                  Analytics Dashboard
-                                </p>
-                                <p className="text-primary-900/70 text-xs">
-                                  Monitor activity and usage insights
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-                <div className="w-0 h-0.5 bg-primary-300 transition-all duration-300 group-hover:w-full"></div>
-              </li>
-
-              <li className="group cursor-pointer">
-                <Link href="/about">About</Link>
-                <div className="w-0 h-0.5 bg-primary-300 transition-all duration-300 group-hover:w-full"></div>
-              </li>
-
-              <li className="group cursor-pointer">
-                <Link href="/contact">Contact</Link>
-                <div className="w-0 h-0.5 bg-primary-300 transition-all duration-300 group-hover:w-full"></div>
-              </li>
-            </ul>
-            <div className="hidden sm:block">
-              <ThemeToggler />
-            </div>
-          </div>
-        </nav>
-      </div>
-
-      {/* Mobile Top Bar */}
-      <div className="block sm:hidden sticky top-0.5 z-50 mx-10 ">
-        <nav
-          className={`flex items-center justify-between
-          mx-6 mt-4 px-6 rounded-xl shadow-sm
-          transition-all duration-300
-          ${scrolled ? "bg-primary-100/70" : "bg-primary-100"}
-        `}
-        >
-          {/* Logo */}
-          <Link href="/" className="relative block w-20 h-20">
-            <Image
-              src="/logo/nexus-logo.png"
-              alt="Nexus Logo"
-              fill
-              priority
-              sizes="120px"
-              className="object-contain"
-            />
-          </Link>
-
-          <div className="flex gap-x-4">
-            <div className="block sm:hidden">
-              <ThemeToggler />
-            </div>
-            {/* Menu Buttons */}
-            <button
-              aria-label="Toggle menu"
-              className="bg-primary-300 cursor-pointer text-slate-50 p-2 rounded-md w-10 h-10 flex items-center justify-center relative transition hover:bg-primary-400"
-              onClick={() => setMobileNav(!mobileNav)}
-            >
-              <Menu
-                className={`absolute transition-all du  ration-300 ${
-                  mobileNav
-                    ? "opacity-0 rotate-90 scale-75"
-                    : "opacity-100 rotate-0 scale-100"
-                }`}
-              />
-
-              <X
-                className={`absolute transition-all duration-300 ${
-                  mobileNav
-                    ? "opacity-100 rotate-0 scale-100"
-                    : "opacity-0 -rotate-90 scale-75"
-                }`}
-              />
-            </button>
-          </div>
-        </nav>
-      </div>
-
-      {/* Overlay */}
-      {mobileNav && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => setMobileNav(false)}
-        />
-      )}
-
-      {/* Mobile Sidebar */}
+    <header className="sticky top-0 z-50 w-full px-3 pt-3 sm:px-6 lg:px-8">
       <nav
-        className={`fixed top-0 left-0 sm:hidden w-1/2 h-dvh bg-primary-100 z-50 transform transition-transform duration-300 ${
-          mobileNav ? "translate-x-0" : "-translate-x-full"
+        aria-label="Primary navigation"
+        className={`mx-auto mt-2 flex max-w-4xl items-center justify-between rounded-2xl border px-4 transition-all duration-300 sm:px-6 ${
+          isScrolled
+            ? "border-primary-200/70 bg-primary-100/85 py-2 shadow-lg shadow-primary-900/5"
+            : "border-transparent bg-primary-100 py-2 shadow-sm sm:py-3"
         }`}
       >
-        {/* Close Button */}
-        <div className="flex justify-end p-4">
-          <button onClick={() => setMobileNav(false)}>
-            <X className="transition-all hover:text-secondary-600 hover:cursor-pointer" />
-          </button>
-        </div>
-
-        {/* Links */}
-        <motion.ul
-          variants={containerVariants}
-          initial="hidden"
-          animate={mobileNav ? "visible" : "hidden"}
-          className="flex flex-col gap-y-6 px-6 mt-6"
+        <Link
+          href="/"
+          aria-label="Nexus home"
+          className="relative block size-18 shrink-0 rounded-xl outline-offset-4 focus-visible:outline-2 focus-visible:outline-primary-500 sm:size-18"
         >
-          <motion.li variants={itemVariants}>
-            <Link
-              className="transition-all hover:text-secondary-600"
-              onClick={() => setMobileNav(false)}
-              href="/"
-            >
-              Home
-            </Link>
-          </motion.li>
-          <motion.li variants={itemVariants}>
-            <Link
-              className="transition-all hover:text-secondary-600"
-              onClick={() => setMobileNav(false)}
-              href="/features"
+          <Image
+            src="/logo/nexus-logo.png"
+            alt="Nexus"
+            fill
+            priority
+            sizes="64px"
+            className="object-contain"
+          />
+        </Link>
+
+        <div className="hidden items-center gap-1 lg:flex">
+          <div
+            className="relative"
+            onMouseEnter={() => setIsFeaturesOpen(true)}
+            onMouseLeave={() => setIsFeaturesOpen(false)}
+          >
+            <button
+              type="button"
+              aria-expanded={isFeaturesOpen}
+              aria-controls="features-menu"
+              className={`group cursor-pointer flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                isActive("/features")
+                  ? "text-primary-700"
+                  : "text-text-700 hover:text-primary-700"
+              }`}
+              onClick={() => setIsFeaturesOpen((open) => !open)}
             >
               Features
-            </Link>
-          </motion.li>
-          <motion.li variants={itemVariants}>
+              <ChevronDown
+                size={16}
+                aria-hidden="true"
+                className={`transition-transform duration-200 ${
+                  isFeaturesOpen ? "rotate-180" : ""
+                }`}
+              />
+              <span className="absolute inset-x-3 bottom-1 h-0.5 origin-left scale-x-0 bg-primary-500 transition-transform group-hover:scale-x-100" />
+            </button>
+
+            <AnimatePresence>
+              {isFeaturesOpen && (
+                <motion.div
+                  id="features-menu"
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  variants={menuMotion}
+                  transition={{ duration: 0.16, ease: "easeOut" }}
+                  className="absolute left-0 top-full mt-2 w-80 rounded-2xl border border-primary-200 bg-primary-100 p-3 shadow-xl shadow-primary-900/10"
+                >
+                  <div className="mb-2 flex items-center justify-between px-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-600">
+                      Explore Nexus
+                    </p>
+                    <ArrowRight size={14} className="text-primary-500" aria-hidden="true" />
+                  </div>
+                  <div className="grid gap-1">
+                    {features.map(({ name, description, href, icon: Icon }) => (
+                      <Link
+                        key={name}
+                        href={href}
+                        onClick={() => setIsFeaturesOpen(false)}
+                        className="group flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-primary-200/50 focus-visible:outline-2 focus-visible:outline-primary-500"
+                      >
+                        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-200 text-primary-700 transition-transform group-hover:scale-105">
+                          <Icon size={17} aria-hidden="true" />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-sm font-medium text-primary-900">
+                            {name}
+                          </span>
+                          <span className="mt-0.5 block text-xs leading-5 text-primary-900/65">
+                            {description}
+                          </span>
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {navigation.map(({ name, href }) => (
             <Link
-              className="transition-all hover:text-secondary-600"
-              onClick={() => setMobileNav(false)}
-              href="/about"
+              key={href}
+              href={href}
+              aria-current={isActive(href) ? "page" : undefined}
+              className={`group relative rounded-lg px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 ${
+                isActive(href)
+                  ? "text-primary-700"
+                  : "text-text-700 hover:text-primary-700"
+              }`}
             >
-              About Us
+              {name}
+              <span className="absolute inset-x-3 bottom-1 h-0.5 origin-left scale-x-0 bg-primary-500 transition-transform group-hover:scale-x-100" />
             </Link>
-          </motion.li>
-          <motion.li variants={itemVariants}>
-            <Link
-              className="transition-all hover:text-secondary-600"
-              onClick={() => setMobileNav(false)}
-              href="/contact"
-            >
-              Contact Us
-            </Link>
-          </motion.li>
-        </motion.ul>
+          ))}
+        </div>
+
+        <div className="hidden items-center gap-3 lg:flex">
+          <ThemeToggler />
+          <Link
+            href="/auth?mode=signup"
+            className="rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-primary-50 transition-colors hover:bg-primary-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+          >
+            Get started
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggler />
+          <button
+            type="button"
+            aria-label={isMobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isMobileOpen}
+            aria-controls="mobile-navigation"
+            className="flex size-10 items-center justify-center rounded-xl bg-primary-300 text-primary-50 transition-colors hover:bg-primary-400 focus-visible:outline-2 focus-visible:outline-primary-500"
+            onClick={() => setIsMobileOpen((open) => !open)}
+          >
+            {isMobileOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
+          </button>
+        </div>
       </nav>
-    </>
+
+      <AnimatePresence>
+        {isMobileOpen && (
+          <>
+            <motion.button
+              type="button"
+              aria-label="Close navigation menu"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 top-0 z-40 cursor-default bg-primary-950/35 lg:hidden"
+              onClick={closeMobileNavigation}
+            />
+            <motion.aside
+              id="mobile-navigation"
+              aria-label="Mobile navigation"
+              initial={{ opacity: 0, x: "100%" }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed inset-y-0 right-0 z-50 flex w-[min(22rem,88vw)] flex-col bg-primary-100 p-5 shadow-2xl lg:hidden"
+            >
+              <div className="flex items-center justify-between border-b border-primary-200/70 pb-4">
+                <span className="text-sm font-semibold uppercase tracking-[0.16em] text-primary-700">
+                  Menu
+                </span>
+                <button
+                  type="button"
+                  aria-label="Close navigation menu"
+                  className="flex size-10 items-center justify-center rounded-xl text-primary-700 transition-colors hover:bg-primary-200 focus-visible:outline-2 focus-visible:outline-primary-500"
+                  onClick={closeMobileNavigation}
+                >
+                  <X size={20} aria-hidden="true" />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-2 py-6">
+                <Link
+                  href="/features"
+                  onClick={closeMobileNavigation}
+                  aria-current={isActive("/features") ? "page" : undefined}
+                  className={`rounded-xl px-4 py-3 text-base font-medium transition-colors ${
+                    isActive("/features")
+                      ? "bg-primary-200 text-primary-800"
+                      : "text-text-700 hover:bg-primary-200/60"
+                  }`}
+                >
+                  Features
+                </Link>
+                {navigation.map(({ name, href }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={closeMobileNavigation}
+                    aria-current={isActive(href) ? "page" : undefined}
+                    className={`rounded-xl px-4 py-3 text-base font-medium transition-colors ${
+                      isActive(href)
+                        ? "bg-primary-200 text-primary-800"
+                        : "text-text-700 hover:bg-primary-200/60"
+                    }`}
+                  >
+                    {name}
+                  </Link>
+                ))}
+              </div>
+
+              <div className="mt-auto border-t border-primary-200/70 pt-5">
+                <Link
+                  href="/auth?mode=signup"
+                  onClick={closeMobileNavigation}
+                  className="flex items-center justify-center rounded-xl bg-primary-500 px-4 py-3 text-sm font-semibold text-primary-50 transition-colors hover:bg-primary-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                >
+                  Get started
+                </Link>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </header>
   );
 }
