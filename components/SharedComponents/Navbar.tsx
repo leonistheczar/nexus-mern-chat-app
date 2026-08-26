@@ -111,7 +111,7 @@ export default function Navbar() {
         aria-label="Primary navigation"
         className={`mx-auto mt-2 flex max-w-4xl items-center justify-between rounded-2xl border px-4 transition-all duration-300 sm:px-6 ${
           isScrolled
-            ? "border-primary-200/70 bg-primary-100/85 py-2 shadow-lg shadow-primary-900/5"
+            ? "border-primary-200 border-px bg-primary-100 py-2 shadow-sm shadow-primary-900/5"
             : "border-transparent bg-primary-100 py-2 shadow-sm sm:py-3"
         }`}
       >
