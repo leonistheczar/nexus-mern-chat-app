@@ -489,14 +489,14 @@ export default function NewGroup() {
                   {/* Selected Members */}
                   {selectedMembers.length > 0 && (
                     <div>
-                      // In Step 2, wrap the count in an animated span
+                      {/* // In Step 2, wrap the count in an animated span */}
                       <motion.span
                         key={selectedMembers.length}
                         initial={{ scale: 0.8 }}
                         animate={{ scale: 1 }}
                         className="text-xs text-primary-600 font-medium"
                       >
-                        {selectedMembers.length}
+                        <span>Selected Members: {selectedMembers.length}</span>
                       </motion.span>
                       <div className="flex flex-wrap gap-2">
                         {selectedMembers.map((member) => (

@@ -12,8 +12,7 @@ import ConfirmationDialog from "@/components/shared/ConfirmationDialog";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function Chat() {
-  const { contacts, showContacts, setShowContacts, open, setOpen } =
-    useChatContacts();
+  const { contacts, showContacts, setShowContacts, open, setOpen } = useChatContacts();
 
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [showProfileOnTablet, setShowProfileOnTablet] = useState(false);
