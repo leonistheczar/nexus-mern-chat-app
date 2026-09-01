@@ -10,6 +10,7 @@ import NewUser from "@/components/ChatPage/ContactsLeft/AddNew/NewUser";
 import NewGroup from "@/components/ChatPage/ContactsLeft/AddNew/NewGroup";
 import ConfirmationDialog from "@/components/shared/ConfirmationDialog";
 import { AnimatePresence, motion } from "framer-motion";
+import { SignOutButton } from "@clerk/nextjs";
 
 export default function Chat() {
   const { contacts, showContacts, setShowContacts, open, setOpen } = useChatContacts();
@@ -49,6 +50,7 @@ export default function Chat() {
       <NewUser onContactSelect={handleContactSelect} />
       <NewGroup />
       <Settings />
+      <SignOutButton redirectUrl="/">  
       <ConfirmationDialog
         isOpen={open}
         setOpen={setOpen}
@@ -60,6 +62,7 @@ export default function Chat() {
           window.location.href = "/";
         }}
       />
+      </SignOutButton>
 
       {/* Contact List Sidebar */}
       <section className="relative z-20 md:col-span-1 min-w-0">

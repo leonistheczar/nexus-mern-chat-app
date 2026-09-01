@@ -1,10 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Settings, MessageSquare, LogOut } from "lucide-react";
+import { Settings, MessageSquare} from "lucide-react";
 import React from "react";
 import { useChatContacts } from "../../../../lib/providers/ChatProvider";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import LogOut from "@/components/ChatPage/ContactsLeft/DropDown/shared/LogOut"
 type DropDownTypes = {
   openDrop: boolean, 
   setOpen: React.Dispatch<React.SetStateAction<boolean>>, 
@@ -62,21 +63,7 @@ export default function SettingsDropDown({openDrop, setOpen, setOpenDrop}: DropD
 
             <div className="w-full h-px bg-slate-800/40 my-1" />
 
-            <motion.button
-              whileTap={{
-                scale: 0.97,
-              }}
-              className="group hover:cursor-pointer p-2 flex w-full gap-x-2 items-center rounded-lg"
-              onClick={()=>{ setOpen(true); setOpenDrop(false) }}
-            >
-              <LogOut
-                size={18}
-                className="group-hover:text-red-500"
-              />
-              <span className="group-hover:text-red-500">
-                Logout
-              </span>
-            </motion.button>
+            <LogOut setOpen={setOpen} setOpenDrop={setOpenDrop} />
           </motion.div>
         )}
       </AnimatePresence>

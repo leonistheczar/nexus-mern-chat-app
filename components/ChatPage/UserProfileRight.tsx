@@ -8,18 +8,16 @@ import {
   Video,
   Bell,
   BellOff,
-  Shield,
   Star,
   FileText,
   Link2,
   Users,
   Ban,
   Trash2,
-  X,
   ArrowLeft,
 } from "lucide-react";
 import Image from "next/image";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 type UserProfileRightProps = {

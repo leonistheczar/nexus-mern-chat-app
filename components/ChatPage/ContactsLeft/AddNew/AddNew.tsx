@@ -13,9 +13,7 @@ type AddNewPropsTypes = {
 
 export default function AddNew({ addNewDropDown, setAddNewDropDown }: AddNewPropsTypes) {
   const {
-    openNewUser,
     setOpenNewUser,
-    isCreateGroupOpen,
     setIsCreateGroupOpen,
   } = useChatContacts();
   const addNewRef = useClickOutside<HTMLDivElement>({

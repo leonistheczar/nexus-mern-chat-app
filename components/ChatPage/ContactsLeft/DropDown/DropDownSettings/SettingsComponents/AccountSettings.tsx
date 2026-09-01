@@ -2,13 +2,14 @@
 
 import Alert from "@/components/SharedComponents/AlertDialog";
 import { useChatContacts } from "@/lib/providers/ChatProvider";
-import { Eye, EyeOff, LogOut, ShieldCheck, Trash2 } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, Trash2 } from "lucide-react";
 import { useState } from "react";
 import SettingsToggle from "./SettingsToggle";
 import { useUserPreferences } from "../userPreferencesStore";
+import LogOut from "../../shared/LogOut";
 
 export default function AccountSettings() {
-  const { setOpen, setOpenSettings } = useChatContacts();
+  const { setOpen, setOpenSettings} = useChatContacts();
   const { twoFactorEnabled, setTwoFactorEnabled } = useUserPreferences();
 
   const [currentPassword, setCurrentPassword] = useState("");
@@ -56,11 +57,6 @@ export default function AccountSettings() {
     });
   };
 
-  const handleLogout = () => {
-    setOpenSettings(false);
-    setOpen(true);
-  };
-
   const handleDeleteAccount = () => {
     setShowDeleteConfirm(false);
     setDeleteAlert(
@@ -69,7 +65,7 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="text-sm space-y-8 max-w-xl">
+    <div  className="text-sm space-y-8 max-w-xl">
       {passwordAlert && (
         <Alert
           variant={passwordAlert.variant}
@@ -133,14 +129,14 @@ export default function AccountSettings() {
                 }
                 className="flex-1 bg-transparent outline-none text-text-900 border-b pb-4 tranisition focus:border-primary-300"
               />
-              <button
-                type="button"
-                onClick={() => field.setShow((prev) => !prev)}
+              <span
+                role="button"
+                onClick={(e) => {e.preventDefault(); e.stopPropagation(); field.setShow((prev) => !prev)}}
                 className="p-2 text-text-900/50 hover:text-text-900 cursor-pointer"
                 aria-label={field.show ? "Hide password" : "Show password"}
               >
                 {field.show ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
+              </span>
             </div>
           </div>
         ))}
@@ -172,25 +168,19 @@ export default function AccountSettings() {
       </section>
 
       <section className="space-y-3 pt-2 border-t border-background-900/10">
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-200/80 hover:bg-primary-300 transition cursor-pointer text-text-900"
-        >
-          <LogOut className="w-4 h-4" />
-          Log out
-        </button>
+      <div className="w-fit"><LogOut setOpen={setOpen} setOpenSettings={setOpenSettings}></LogOut></div>
 
-        {!showDeleteConfirm ? (
+        {!showDeleteConfirm && (
           <button
             type="button"
-            onClick={() => setShowDeleteConfirm(true)}
+            onClick={(e) => {e.stopPropagation(); setShowDeleteConfirm(true)}}  
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-red-500 bg-red-500/10 hover:bg-red-500/20 cursor-pointer"
           >
             <Trash2 className="w-4 h-4" />
             Delete account
           </button>
-        ) : (
+        )} 
+        {showDeleteConfirm && ( 
           <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/5 space-y-3">
             <p className="text-sm text-text-900 leading-relaxed">
               This permanently removes your account and chat history. This

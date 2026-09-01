@@ -13,7 +13,7 @@ type ConfirmationDialogProps = {
   variant?: "danger" | "warning" | "info";
   isLoading?: boolean;
 
-  onConfirm: () => void;
+  onConfirm?: () => void;
   onCancel: () => void;
 };
 

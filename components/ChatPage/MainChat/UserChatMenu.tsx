@@ -12,7 +12,7 @@ import {
   Trash2,
 } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 type UserChatMenuProps = {
