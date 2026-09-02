@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useChatContacts } from "@/lib/providers/ChatProvider";
+import { useChatContacts } from "@/lib/providers/ChatUIProvider";
 import { X, UserPlus, Search, AtSign, Phone, Check } from "lucide-react";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { Contact } from "@/app/types/types";

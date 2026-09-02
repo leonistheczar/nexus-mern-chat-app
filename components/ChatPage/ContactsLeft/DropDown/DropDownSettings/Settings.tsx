@@ -1,6 +1,6 @@
 "use client";
 
-import { useChatContacts } from "@/lib/providers/ChatProvider";
+import { useChatContacts } from "@/lib/providers/ChatUIProvider";
 import { lockBodyScroll } from "@/lib/bodyScrollLock";
 import { useEffect, useState } from "react";
 import { ActiveSettingsTabs, useSettings } from "./SettingsStore";

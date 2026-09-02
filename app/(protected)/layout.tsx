@@ -1,5 +1,3 @@
-import { ChatContactsProvider } from "@/lib/providers/ChatProvider";
-import { getContacts } from "@/lib/getContacts";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -52,14 +50,12 @@ export const metadata: Metadata = {
     "MERN chat app",
   ],
 };
-export default async function DashboardLayout({
+export default async function ProtectedChatLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const contacts = await getContacts();
-
   return (
     <main className="h-screen">
-      <ChatContactsProvider contacts={contacts}>{children}</ChatContactsProvider>
+      {children}
     </main>
   );
 }

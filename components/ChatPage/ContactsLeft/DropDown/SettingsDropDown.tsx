@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Settings, MessageSquare} from "lucide-react";
 import React from "react";
-import { useChatContacts } from "../../../../lib/providers/ChatProvider";
+import { useChatContacts } from "../../../../lib/providers/ChatUIProvider";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import LogOut from "@/components/ChatPage/ContactsLeft/DropDown/shared/LogOut"
 type DropDownTypes = {

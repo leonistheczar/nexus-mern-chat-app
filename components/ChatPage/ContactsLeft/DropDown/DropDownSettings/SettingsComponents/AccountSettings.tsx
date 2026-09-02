@@ -1,7 +1,7 @@
 "use client";
 
 import Alert from "@/components/SharedComponents/AlertDialog";
-import { useChatContacts } from "@/lib/providers/ChatProvider";
+import { useChatContacts } from "@/lib/providers/ChatUIProvider";
 import { Eye, EyeOff, ShieldCheck, Trash2 } from "lucide-react";
 import { useState } from "react";
 import SettingsToggle from "./SettingsToggle";
