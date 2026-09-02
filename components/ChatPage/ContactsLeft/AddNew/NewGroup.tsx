@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useChatContacts } from "@/lib/providers/ChatProvider";
+import { useChatContacts } from "@/lib/providers/ChatUIProvider";
 import {
   X,
   Users,
@@ -14,16 +14,14 @@ import {
   ArrowLeft,
   ArrowRight,
   Search,
-  AtSign,
-  User,
   UserPlus,
   UserCheck,
-  Check,
   Phone,
   CircleCheck,
 } from "lucide-react";
 import { Contact } from "@/app/types/types";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import Image from "next/image";
 
 interface GroupFormData {
   name: string;
@@ -163,7 +161,7 @@ export default function NewGroup() {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       console.log("Creating group:", groupPayload);
       handleReset();
-    } catch (err) {
+    } catch {
       setError("Failed to create group. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -214,9 +212,7 @@ export default function NewGroup() {
   return (
     <AnimatePresence>
       {isCreateGroupOpen && (
-        <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <motion.div
             ref={groupModalRef}
             className="relative z-10 w-full max-w-lg max-h-[90vh] flex flex-col rounded-2xl bg-primary-100 shadow-2xl border border-background-200 overflow-hidden"
@@ -302,10 +298,12 @@ export default function NewGroup() {
                     <div className="relative group">
                       {groupData.photoPreview ? (
                         <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-background-200">
-                          <img
+                          <Image
                             src={groupData.photoPreview}
                             alt="Group"
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            unoptimized
                           />
                           <button
                             type="button"
@@ -489,16 +487,15 @@ export default function NewGroup() {
                   {/* Selected Members */}
                   {selectedMembers.length > 0 && (
                     <div>
-                      // In Step 2, wrap the count in an animated span
                       <motion.span
                         key={selectedMembers.length}
                         initial={{ scale: 0.8 }}
                         animate={{ scale: 1 }}
                         className="text-xs text-primary-600 font-medium"
                       >
-                        {selectedMembers.length}
+                        <span>Selected Members: {selectedMembers.length}</span>
                       </motion.span>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 mt-2">
                         {selectedMembers.map((member) => (
                           <div
                             key={member.id}
@@ -506,10 +503,13 @@ export default function NewGroup() {
                           >
                             <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center shrink-0 overflow-hidden">
                               {member.profile_pic ? (
-                                <img
+                                <Image
                                   src={member.profile_pic}
                                   alt=""
-                                  className="w-full h-full object-cover"
+                                  width={24}
+                                  height={24}
+                                  className="object-cover"
+                                  unoptimized
                                 />
                               ) : (
                                 <span className="text-xs font-medium text-primary-600">
@@ -563,12 +563,14 @@ export default function NewGroup() {
                             className="flex items-center justify-between p-3 hover:bg-primary-200/40 rounded-lg transition-colors group"
                           >
                             <div className="flex items-center gap-x-3 min-w-0">
-                              <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0 overflow-hidden">
+                              <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0 overflow-hidden relative">
                                 {contact.profile_pic ? (
-                                  <img
+                                  <Image
                                     src={contact.profile_pic}
                                     alt=""
-                                    className="w-full h-full object-cover"
+                                    fill
+                                    className="object-cover"
+                                    unoptimized
                                   />
                                 ) : (
                                   <span className="text-sm font-medium text-primary-600">
@@ -653,11 +655,13 @@ export default function NewGroup() {
                     {/* Header */}
                     <div className="flex items-center gap-4">
                       {groupData.photoPreview ? (
-                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-background-200 shrink-0">
-                          <img
+                        <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-background-200 shrink-0">
+                          <Image
                             src={groupData.photoPreview}
                             alt=""
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            unoptimized
                           />
                         </div>
                       ) : (
@@ -719,14 +723,16 @@ export default function NewGroup() {
                           {selectedMembers.slice(0, 5).map((member) => (
                             <div
                               key={member.id}
-                              className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center overflow-hidden"
+                              className="relative w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center overflow-hidden"
                               title={`${member.first_name} ${member.last_name}`}
                             >
                               {member.profile_pic ? (
-                                <img
+                                <Image
                                   src={member.profile_pic}
                                   alt=""
-                                  className="w-full h-full object-cover"
+                                  fill
+                                  className="object-cover"
+                                  unoptimized
                                 />
                               ) : (
                                 <span className="text-xs font-medium text-primary-600">

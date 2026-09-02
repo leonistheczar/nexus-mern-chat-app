@@ -3,7 +3,7 @@
 
 import { ChatMessage } from "@/app/types/types";
 import { BookCopy, ChevronDown, Trash2 } from "lucide-react";
-import { useState, useRef, useCallback } from "react";
+import { useState } from "react";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { AnimatePresence, motion } from "framer-motion";
 

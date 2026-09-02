@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useChatContacts } from "@/lib/providers/ChatProvider";
-import { X, UserPlus, Search, AtSign, User, Phone, Check } from "lucide-react";
+import { useChatContacts } from "@/lib/providers/ChatUIProvider";
+import { X, UserPlus, Search, AtSign, Phone, Check } from "lucide-react";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { Contact } from "@/app/types/types";
 import { lockBodyScroll } from "@/lib/bodyScrollLock";
@@ -144,10 +145,13 @@ export default function NewUser({ onContactSelect }: NewUserProps) {
                           <div className="flex items-center gap-x-3 min-w-0 flex-1">
                             <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0 overflow-hidden">
                               {contact.profile_pic ? (
-                                <img
+                                <Image
                                   src={contact.profile_pic}
                                   alt={`${contact.first_name} ${contact.last_name}`}
                                   className="w-full h-full object-cover"
+                                  width={25}
+                                  height={25}
+                                  unoptimized
                                 />
                               ) : (
                                 <span className="text-sm font-medium text-primary-600">

@@ -18,7 +18,7 @@ export default function ContactClient() {
   };
 
   return (
-    <section className="min-h-screen bg-background-50 text-primary-900 px-6 py-12 rounded-lg shadow-md">
+    <section className="bg-background-50 text-primary-900 px-6 py-12 rounded-lg shadow-md mt-8">
       <motion.div
         variants={container}
         initial="hidden"
@@ -79,17 +79,21 @@ export default function ContactClient() {
 
           {/* Contact Form */}
           <motion.form
+            action={"https://formspree.io/f/moeagykb"}
+            method="POST"
             variants={item}
             className="p-6 bg-primary-100 rounded-2xl shadow-md space-y-5"
           >
             <div className="grid sm:grid-cols-2 gap-4">
               <input
                 type="text"
+                name="Name"
                 placeholder="Your Name"
                 className="bg-background-50 w-full px-4 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-1 focus:ring-primary-300"
               />
               <input
                 type="email"
+                name="Email"
                 placeholder="Your Email"
                 className="bg-background-50 w-full px-4 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-1 focus:ring-primary-300"
               />
@@ -97,12 +101,14 @@ export default function ContactClient() {
 
             <input
               type="text"
+              name="Subject"
               placeholder="Subject"
               className="bg-background-50 w-full px-4 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-1 focus:ring-primary-300"
             />
 
             <textarea
               rows={5}
+              name="Message"
               placeholder="Your Message"
               className="bg-background-50 w-full px-4 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-1 focus:ring-primary-300 resize-none"
             />

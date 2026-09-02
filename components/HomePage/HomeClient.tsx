@@ -1,3 +1,4 @@
+"use client";
 import Features from "./Features";
 import { HeroLeft } from "./HeroLeft";
 import HeroRight from "./HeroRight";

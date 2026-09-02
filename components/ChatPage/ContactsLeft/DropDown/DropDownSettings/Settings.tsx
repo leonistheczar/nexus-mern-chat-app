@@ -1,6 +1,6 @@
 "use client";
 
-import { useChatContacts } from "@/lib/providers/ChatProvider";
+import { useChatContacts } from "@/lib/providers/ChatUIProvider";
 import { lockBodyScroll } from "@/lib/bodyScrollLock";
 import { useEffect, useState } from "react";
 import { ActiveSettingsTabs, useSettings } from "./SettingsStore";
@@ -39,13 +39,10 @@ export default function Settings() {
   const { activeTab, setActiveTab } = useSettings();
   const { openSettings, setOpenSettings } = useChatContacts();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const settingsRef = useClickOutside<HTMLDivElement>({
+  const settingsRef = useClickOutside({
     enabled: openSettings,
-    onEscape: () => handleExplicitClose(),
-    onOutsideClick: () => handleExplicitClose(),
-  });
-
+    onEscape: () => setOpenSettings(false),
+  })
   // Lock body scroll when settings is open
   useEffect(() => {
     if (openSettings) {
@@ -65,13 +62,6 @@ export default function Settings() {
       setIsMobileMenuOpen(false);
     }
   }, [openSettings]);
-
-  // Simple handler for explicit click events
-  const handleExplicitClose = () => {
-    setActiveTab("profile");
-    setOpenSettings(false);
-    setIsMobileMenuOpen(false);
-  };
 
   const handleTabClick = (tabId: ActiveSettingsTabs) => {
     setActiveTab(tabId);
@@ -95,25 +85,24 @@ export default function Settings() {
       {openSettings && (
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.2 } }}
-          transition={{ duration: 0.05, ease: "linear" }}
+          animate={{ opacity: 1 }}  
+          exit={{ opacity: 0}}
+          transition={{ duration: 0.15, ease: "linear" }}
           className="fixed inset-0 bg-slate-950/40 z-50 flex justify-start"
         >
           <motion.div
-            ref={settingsRef}
             initial={{ translateX: "-100%" }}
+            ref={settingsRef}
             animate={{ translateX: 0 }}
             transition={{ type: "tween", ease: "easeOut", duration: 0.25 }}
             exit={{ translateX: "-100%" }}
             style={{ willChange: "transform" }}
-            className="w-full max-w-full sm:max-w-xl md:max-w-2xl h-full bg-primary-100 shadow-2xl flex flex-col md:grid md:grid-cols-[0.5fr_1fr] lg:grid-cols-[0.65fr_1fr] border-r border-slate-200/20"
+            className="w-full relative z-50 max-w-full sm:max-w-xl md:max-w-2xl h-full bg-primary-100 shadow-2xl flex flex-col md:grid md:grid-cols-[0.5fr_1fr] lg:grid-cols-[0.65fr_1fr] border-r border-slate-200/20"
           >
             {/* Mobile Header */}
             <div className="md:hidden flex items-center justify-between p-4 border-b border-slate-500/20 bg-primary-100 z-10">
               <div className="flex items-center gap-x-2">
                 <button
-                  onClick={handleExplicitClose}
                   className="p-2 rounded-lg hover:bg-background-50 cursor-pointer"
                   aria-label="Close settings"
                 >
@@ -153,7 +142,7 @@ export default function Settings() {
                         return (
                           <button
                             key={tab.id}
-                            onClick={() => handleTabClick(tab.id)}
+                            onClick={(e) => {e.stopPropagation(); handleTabClick(tab.id)}}
                             className={`flex items-center gap-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                               isActive
                                 ? "bg-primary-200 text-text-800 shadow-sm"
@@ -175,8 +164,8 @@ export default function Settings() {
             <div className="hidden md:flex flex-col border-r border-slate-500/20 bg-primary-50/30">
               <div className="flex items-center gap-x-2 p-4 pb-6">
                 <button
-                  onClick={handleExplicitClose}
-                  className="p-2 rounded-lg hover:bg-background-50 cursor-pointer"
+                  className="p-2 rounded-lg hover:bg-primary-200/30 cursor-pointer"
+                  onClick={() => setOpenSettings(false)}
                   aria-label="Close settings"
                 >
                   <PanelLeftClose size={20} />
@@ -191,7 +180,7 @@ export default function Settings() {
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={(e) => {e.stopPropagation(); setActiveTab(tab.id)}}
                       className={`flex items-center gap-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all cursor-pointer group ${
                         isActive
                           ? "bg-primary-200/70 shadow-sm"

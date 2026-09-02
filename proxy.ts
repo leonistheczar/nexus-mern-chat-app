@@ -1,5 +1,4 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
-
 function isProtectedPath(pathname: string) {
   return pathname === "/chat" ||
     pathname.startsWith("/chat/") ||

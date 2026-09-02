@@ -1,6 +1,6 @@
 'use client';
 
-import { Info, CheckCircle2, AlertTriangle, X } from 'lucide-react';
+import { Info, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export type AlertVariant = 'info' | 'success' | 'warning';
@@ -17,7 +17,6 @@ export default function Alert({
   title,
   message,
   variant = 'success',
-  onClose,
   isVisible = true,
 }: AlertProps) {
   

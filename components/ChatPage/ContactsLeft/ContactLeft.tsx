@@ -5,14 +5,17 @@ import { ChevronLeft, CirclePlus, EllipsisVertical } from "lucide-react";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useChatContacts } from "@/lib/providers/ChatProvider";
+import { useChatContacts } from "@/lib/providers/ChatUIProvider";
 import SettingsDropDown from "./DropDown/SettingsDropDown";
 import AddNew from "./AddNew/AddNew";
 import ThemeToggler from "@/components/SharedComponents/ThemeToggler";
+import { SyncLoader } from "react-spinners";
 type ContactLeftProps = {
   contacts: Contact[];
   selectedContact: Contact | null;
   onSelectContact: (contact: Contact) => void;
+  isPending: boolean;
+  isError: boolean;
   showContacts: boolean;
   setShowContacts: React.Dispatch<React.SetStateAction<boolean>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -77,6 +80,8 @@ type SidebarBodyProps = {
   search: string;
   setSearch: (v: string) => void;
   filteredContacts: Contact[];
+  isPending: boolean;
+  isError: boolean;
   selectedContact: Contact | null;
   onSelect: (contact: Contact) => void;
   inputName: string;
@@ -92,6 +97,8 @@ function SidebarBody({
   selectedContact,
   onSelect,
   inputName,
+  isPending,
+  isError,
   openDrop,
   setOpenDrop,
   setOpen,
@@ -153,30 +160,41 @@ function SidebarBody({
           placeholder="Search or start a new conversation"
         />
       </div>
-{/* Direct Tabs */}
-<div className="p-2">
-  <ul className="flex gap-1">
-    {directTabs.map((tab) => (
-      <li key={tab} className="flex-1">
-        <button
-          onClick={() => setDirectTab(tab)}
-          className={`w-full flex items-center justify-center gap-2 px-3 py-2 border border-slate-800/20 rounded-full text-sm font-medium transition-all cursor-pointer ${
-            directTab === tab
-              ? "bg-primary-300/60 text-text-800 shadow-sm"
-              : "text-text-600 hover:bg-primary-400/20 hover:text-text-800"
-          }`}
-        >
-          <span className="truncate">{tab}</span>
-        </button>
-      </li>
-    ))}
-  </ul>
-</div>
+      {/* Direct Tabs */}
+      <div className="p-2">
+        <ul className="flex gap-1">
+          {directTabs.map((tab) => (
+            <li key={tab} className="flex-1">
+              <button
+                onClick={() => setDirectTab(tab)}
+                className={`w-full flex items-center justify-center gap-2 px-3 py-2 border border-slate-800/20 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                  directTab === tab
+                    ? "bg-primary-300/60 text-text-800 shadow-sm"
+                    : "text-text-600 hover:bg-primary-400/20 hover:text-text-800"
+                }`}
+              >
+                <span className="truncate">{tab}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
       <ul className="flex flex-col gap-y-2 px-2 overflow-auto scrollbar-thumb-primary-200">
-        {filteredContacts.length === 0 ? (
-          <p className="text-sm text-center text-text-600 px-2 mt-4">
+        {isPending ? (
+          <li
+            className="flex justify-center py-6"
+            aria-label="Loading contacts"
+          >
+            <SyncLoader size={10} color="var(--color-primary-500)" />
+          </li>
+        ) : isError ? (
+          <li className="px-2 py-4 text-sm text-center text-red-600" role="alert">
+            Failed to fetch contacts. Please try again.
+          </li>
+        ) : filteredContacts.length === 0 ? (
+          <li className="text-sm text-center text-text-600 px-2 mt-4">
             No contact found
-          </p>
+          </li>
         ) : (
           filteredContacts.map((contact, index) => (
             <ContactItem
@@ -197,6 +215,8 @@ function SidebarBody({
 export default function ContactLeft({
   contacts,
   selectedContact,
+  isPending,
+  isError,
   onSelectContact,
   showContacts,
   setShowContacts,
@@ -235,6 +255,8 @@ export default function ContactLeft({
           search={search}
           setSearch={setSearch}
           filteredContacts={filteredContacts}
+          isPending={isPending}
+          isError={isError}
           selectedContact={selectedContact}
           onSelect={handleSelect}
           inputName="contact-search-desktop"
@@ -256,6 +278,8 @@ export default function ContactLeft({
             search={search}
             setSearch={setSearch}
             filteredContacts={filteredContacts}
+            isPending={isPending}
+            isError={isError}
             selectedContact={selectedContact}
             onSelect={handleSelect}
             inputName="contact-search-mobile"

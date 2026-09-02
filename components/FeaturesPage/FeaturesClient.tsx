@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import ScrollRevealSection from "../SharedComponents/ScrollRevelation";
 import AdvancedFeatures from "./AdvancedFeatures";

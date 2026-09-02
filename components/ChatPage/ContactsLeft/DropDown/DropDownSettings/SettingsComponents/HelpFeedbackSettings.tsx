@@ -3,7 +3,7 @@
 import Alert from "@/components/SharedComponents/AlertDialog";
 import Link from "next/link";
 import { BookOpen, Bug, ExternalLink, MessageCircle, Send } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 
 const HELP_LINKS = [
   {

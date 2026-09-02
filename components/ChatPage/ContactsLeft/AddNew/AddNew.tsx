@@ -1,7 +1,7 @@
 "use client";
 
 import { useClickOutside } from "@/hooks/useClickOutside";
-import { useChatContacts } from "@/lib/providers/ChatProvider";
+import { useChatContacts } from "@/lib/providers/ChatUIProvider";
 import { AnimatePresence, motion } from "framer-motion";
 import { UserPlus, Users } from "lucide-react";
 
@@ -13,9 +13,7 @@ type AddNewPropsTypes = {
 
 export default function AddNew({ addNewDropDown, setAddNewDropDown }: AddNewPropsTypes) {
   const {
-    openNewUser,
     setOpenNewUser,
-    isCreateGroupOpen,
     setIsCreateGroupOpen,
   } = useChatContacts();
   const addNewRef = useClickOutside<HTMLDivElement>({
